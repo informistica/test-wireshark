@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Home - Lab Wireshark Django</title>
+</head>
+<body>
+
+<h1>Laboratorio di analisi HTTP con Wireshark</h1>
+
+{% if user.is_authenticated %}
+    <h2>Benvenuto, {{ user.username }}!</h2>
+    
+    <p><strong>Sei autenticato.</strong> Il server ha riconosciuto la tua sessione.</p>
+    
+    <div style="border: 1px solid green; padding: 10px; margin: 20px 0; background-color: #f0fff0;">
+        <h3>🔍 Cosa vedi in Wireshark?</h3>
+        <p><strong>Quando hai fatto il login con successo:</strong></p>
+        <ul>
+            <li>Il server ha risposto con <strong>HTTP 302 Found</strong> (redirect)</li>
+            <li>Nella risposta 302 trovi <strong>Set-Cookie: sessionid=...</strong></li>
+            <li>Il browser è stato reindirizzato a questa pagina (GET /)</li>
+            <li>La richiesta GET / include <strong>Cookie: sessionid=...</strong></li>
+            <li>Il server restituisce questa pagina personalizzata (HTTP 200 OK)</li>
+        </ul>
+        <p><em>Filtro Wireshark consigliato: <code>http.response.code == 302</code> per vedere il redirect con sessionid.</em></p>
+    </div>
+
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
+    
+    <p style="font-size: 0.9em; color: #666;">
+        <strong>Nota:</strong> Il logout invierà una richiesta POST. Dopo il logout il sessionid verrà invalidato dal server.
+    </p>
+
+{% else %}
+    <h2>Accesso anonimo</h2>
+    
+    <p>Non sei autenticato. Le richieste HTTP che vedi in Wireshark <strong>non contengono cookie di sessione validi</strong>.</p>
+    
+    <div style="border: 1px solid blue; padding: 10px; margin: 20px 0; background-color: #f0f8ff;">
+        <h3>📖 Obiettivo didattico</h3>
+        <p>Questa applicazione serve per osservare il flusso HTTP di un login Django con Wireshark.</p>
+        <p><strong>Cosa imparerai:</strong></p>
+        <ul>
+            <li>Fase 1: <strong>GET /accounts/login/</strong> → il server invia il form con il token CSRF (cookie csrftoken + campo nascosto csrfmiddlewaretoken)</li>
+            <li>Fase 2: <strong>POST /accounts/login/</strong> con username e password (corpo application/x-www-form-urlencoded in chiaro!)</li>
+            <li>Fase 3a: Se login OK → <strong>HTTP 302</strong> + <strong>Set-Cookie sessionid</strong> (redirect alla home)</li>
+            <li>Fase 3b: Se login fallito → <strong>HTTP 200</strong> (form re-renderizzato) <strong>senza sessionid</strong></li>
+            <li>Fase 4: GET / autenticato → richiesta con <strong>Cookie: sessionid</strong> → pagina personalizzata</li>
+        </ul>
+        <p><em>Usa Wireshark con filtro: <code>tcp.port == 8000</code> per catturare tutto il traffico locale verso Django.</em></p>
+    </div>
+
+    <p><a href="{% url 'login' %}">Vai al login</a></p>
+
+{% endif %}
+
+<hr>
+<p style="font-size: 0.8em; color: #999;">
+    Progetto didattico per laboratori di networking - Django + Wireshark<br>
+    Connessione HTTP in chiaro su localhost:8000
+</p>
+
+</body>
+</html>
