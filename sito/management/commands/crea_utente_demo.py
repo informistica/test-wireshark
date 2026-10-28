@@ -10,9 +10,9 @@ class Command(BaseCommand):
         password = 'lab2024'
         
         if User.objects.filter(username=username).exists():
-            self.stdout.write(self.style.WARNING(f'Utente "{username}" esiste già.'))
+            self.stdout.write(self.style.WARNING(f'Utente "{username}" esiste gia (nessuna modifica necessaria).'))
         else:
             User.objects.create_user(username=username, password=password)
-            self.stdout.write(self.style.SUCCESS(f'✓ Utente demo "{username}" creato con successo!'))
+            self.stdout.write(self.style.SUCCESS(f'Utente demo "{username}" creato con successo!'))
             self.stdout.write(f'  Username: {username}')
             self.stdout.write(f'  Password: {password}')
