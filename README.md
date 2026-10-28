@@ -137,7 +137,7 @@ Il server sarà raggiungibile all'indirizzo: **http://127.0.0.1:8000**
 | Aspetto | Login riuscito | Login fallito |
 |---------|----------------|---------------|
 | Status code POST | **302 Found** | **200 OK** |
-| Set-Cookie sessionid | **Presente** ✓ | **Assente** ✗ |
+| Set-Cookie sessionid | **Presente** (SI) | **Assente** (NO) |
 | Redirect | Location: / | Nessun redirect |
 | Pagina successiva | Home autenticato | Form con errore |
 
