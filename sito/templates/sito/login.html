@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Lab Wireshark Django</title>
+</head>
+<body>
+
+<h1>Login - Laboratorio Wireshark</h1>
+
+<div style="border: 1px solid orange; padding: 10px; margin: 20px 0; background-color: #fff8f0;">
+    <h3>🔍 Cosa sta succedendo?</h3>
+    <p>Hai appena ricevuto questa pagina con una richiesta <strong>GET /accounts/login/</strong>.</p>
+    <p><strong>In Wireshark vedrai:</strong></p>
+    <ul>
+        <li>La risposta HTTP 200 OK dal server</li>
+        <li>Nel header <strong>Set-Cookie: csrftoken=...</strong> (token anti-CSRF)</li>
+        <li>Nel body HTML il campo nascosto <code>&lt;input name="csrfmiddlewaretoken" value="..."&gt;</code></li>
+    </ul>
+    <p><em>Quando invii il form, osserverai il POST con username, password e csrfmiddlewaretoken in chiaro (application/x-www-form-urlencoded).</em></p>
+</div>
+
+{% if form.errors %}
+<div style="border: 2px solid red; padding: 10px; margin: 20px 0; background-color: #fff0f0;">
+    <h3>❌ Login fallito</h3>
+    <p><strong>Credenziali errate.</strong> Il server ha risposto con <strong>HTTP 200 OK</strong> (form re-renderizzato).</p>
+    <p><strong>In Wireshark noterai:</strong></p>
+    <ul>
+        <li>La risposta <strong>NON contiene Set-Cookie: sessionid</strong></li>
+        <li>Status code: <strong>200</strong> (non 302!)</li>
+        <li>Il browser resta sulla stessa pagina di login</li>
+    </ul>
+    <p><em>Filtro Wireshark: <code>http.request.method == POST</code> per vedere la tua richiesta di login.</em></p>
+</div>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    
+    <p>
+        <label for="id_username">Username:</label><br>
+        <input type="text" name="username" id="id_username" autofocus required>
+    </p>
+    
+    <p>
+        <label for="id_password">Password:</label><br>
+        <input type="password" name="password" id="id_password" required>
+    </p>
+    
+    <button type="submit">Login</button>
+</form>
+
+<div style="border: 1px solid green; padding: 10px; margin: 20px 0; background-color: #f0fff0;">
+    <h3>✅ Se il login ha successo...</h3>
+    <p><strong>Il server risponderà con HTTP 302 Found (redirect)</strong></p>
+    <p><strong>Nella risposta troverai:</strong></p>
+    <ul>
+        <li><strong>Set-Cookie: sessionid=...</strong> (cookie di sessione Django)</li>
+        <li>Header <strong>Location: /</strong> (redirect alla home)</li>
+    </ul>
+    <p>Il browser seguirà il redirect con una nuova richiesta GET / che <strong>includerà Cookie: sessionid</strong>.</p>
+    <p><em>Filtro Wireshark: <code>http.response.code == 302</code> per vedere il redirect con sessionid.</em></p>
+</div>
+
+<hr>
+
+<p><a href="{% url 'home' %}">Torna alla home</a></p>
+
+<p style="font-size: 0.8em; color: #999;">
+    <strong>Credenziali demo:</strong> username=<code>pippo</code>, password=<code>lab2024</code><br>
+    (Consulta il README per creare l'utente demo se non esiste)
+</p>
+
+</body>
+</html>
