@@ -213,14 +213,6 @@ Per vedere i pacchetti dell'handshake TCP sulla porta 8000:
 
 **In produzione:** usare sempre HTTPS, password forti, DEBUG=False, secret key in variabili d'ambiente.
 
-## Esercizi proposti per gli studenti
-
-1. Cattura il traffico di un login **fallito** e uno **riuscito**, salva i due file .pcap e confrontali
-2. Trova il campo `csrfmiddlewaretoken` nel body del POST usando Wireshark
-3. Copia il valore del `sessionid` da Wireshark e confrontalo con il cookie nel browser (Strumenti sviluppatore > Storage/Cookies)
-4. Modifica il codice per cambiare il messaggio di benvenuto e osserva la risposta HTTP in Wireshark
-5. Prova a fare il logout e verifica che le richieste successive **non** contengano più il cookie sessionid valido
-
 ## Troubleshooting
 
 ### Il server non parte
