@@ -82,16 +82,51 @@ Il server sarà raggiungibile all'indirizzo: **http://127.0.0.1:8000**
 
 ### Filtri utili
 
-| Filtro Wireshark | Descrizione |
-|------------------|-------------|
-| `tcp.port == 8000` | Tutto il traffico verso/da Django |
-| `http.request.method == GET` | Tutte le richieste GET |
-| `http.request.method == POST` | Richiesta POST del login |
-| `http.response.code == 302` | Redirect (login riuscito) |
-| `http.response.code == 200` | Risposta normale |
-| `http.cookie contains "sessionid"` | Richieste con sessionid |
-| `http.set_cookie contains "sessionid"` | Risposte che impostano sessionid |
-| `http.set_cookie contains "csrftoken"` | Cookie CSRF |
+#### Come combinare i filtri display (AND / OR)
+
+Nella barra filtro di Wireshark puoi unire condizioni con operatori logici:
+
+- **AND (e)**: usa `&&` oppure la parola `and`. Entrambe le condizioni devono essere vere.
+  - Schema: `tcp.port == <numero_porta> && http`
+  - Schema: `http.request.method == "<METODO>" && http.request.uri contains "<testo>"`
+
+- **OR (o)**: usa `||` oppure la parola `or`. Basta che una delle condizioni sia vera.
+  - Schema: `http.response.code == <codice1> || http.response.code == <codice2>`
+
+- **NOT / raggruppamento**: usa `!` (negazione) e parentesi `( )` per l'ordine delle operazioni.
+  - Schema: `tcp.port == <numero_porta> && (http.request.method == "GET" || http.request.method == "POST")`
+
+#### Filtri in forma generale (da soli o combinati)
+
+Sostituisci i parametri tra `< >` con i valori della tua cattura. Negli esercizi dovrai costruire tu il filtro combinando questi elementi base.
+
+| Filtro | Descrizione |
+|--------|-------------|
+| `tcp.port == <numero_porta>` | Traffico TCP sulla porta del servizio (es. 8000 per runserver) |
+| `http` | Solo pacchetti riconosciuti come HTTP |
+| `http.request.method == "<METODO>"` | METODO tipicamente `"GET"` o `"POST"` |
+| `http.request.uri == "<url>"` | URL esatto della risorsa richiesta (es. `/accounts/login/`) |
+| `http.request.uri contains "<testo>"` | URI che contiene un frammento (es. parte del percorso) |
+| `http.response.code == <codice>` | Risposte con uno status HTTP (es. 200, 302, …) |
+| `tcp.flags.syn == 1` | Segmenti con flag SYN (apertura / handshake) |
+| `tcp.flags.ack == 0` | Senza flag ACK (utile insieme a SYN per il solo SYN iniziale) |
+| `tcp.flags.ack == 1` | Con flag ACK (utile insieme a SYN per il SYN-ACK) |
+| `tcp.flags.fin == 1` | Segmenti con flag FIN (chiusura) |
+| `tcp.stream eq <N>` | Tutti i pacchetti dello stream TCP numero N (sostituisci N) |
+| `http.cookie` | Richieste che trasportano header Cookie |
+| `http.set_cookie` | Risposte che trasportano header Set-Cookie |
+
+**Suggerimento**: Dopo aver selezionato un pacchetto, tasto destro → Follow → TCP Stream per vedere richiesta/risposta in chiaro.
+
+#### Filtri concreti forniti solo per l'handshake (SYN e SYN-ACK)
+
+Per vedere i pacchetti dell'handshake TCP sulla porta 8000:
+
+- **SYN e SYN-ACK**: `tcp.port == 8000 && tcp.flags.syn == 1`
+- **Solo SYN iniziale**: `tcp.flags.syn == 1 && tcp.flags.ack == 0`
+- **Solo SYN-ACK**: `tcp.flags.syn == 1 && tcp.flags.ack == 1`
+
+**Nota**: Il terzo passo dell'handshake (ACK senza SYN) non ha il flag SYN attivo, quindi con questi filtri non compare. Dopo aver trovato lo stream, usa `tcp.stream eq <N>` e guarda i primi tre pacchetti per vedere l'handshake completo.
 
 ### Sequenza HTTP completa (login riuscito)
 
