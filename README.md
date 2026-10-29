@@ -28,7 +28,7 @@ cd <DIRECTORY_PROGETTO>
 
 ```bash
 python3 -m venv venv
-source venv/bin/activate  # Su Windows: venv\Scripts\activate
+venv\Scripts\activate   # Su MAC/Linux: source venv/bin/activate 
 ```
 
 ### 3. Installa le dipendenze
@@ -65,18 +65,18 @@ Il server sarà raggiungibile all'indirizzo: **http://127.0.0.1:8000**
 
 ### Scenario 1: Login riuscito
 
-1. Apri Wireshark e avvia la cattura sull'interfaccia di loopback (`lo` o `Loopback: lo0`)
+1. Apri Wireshark e avvia la cattura sull'interfaccia di loopback 
 2. Applica il filtro: `tcp.port == 8000`
 3. Apri il browser e vai su **http://127.0.0.1:8000**
 4. Clicca su "Vai al login"
 5. Inserisci le credenziali corrette: username `pippo`, password `lab2024`
-6. Ferma la cattura in Wireshark
+6. Ferma la cattura in Wireshark e salvala su disco.
 
 ### Scenario 2: Login fallito
 
 1. Ripeti i passaggi 1-4
 2. Inserisci credenziali **errate** (es. password sbagliata)
-3. Ferma la cattura
+3. Ferma la cattura e salvala su disco.
 
 ## Cosa osservare in Wireshark
 
@@ -201,23 +201,10 @@ Per vedere i pacchetti dell'handshake TCP sulla porta 8000:
 └── README.md              # Questo file
 ```
 
-## Note di sicurezza (SOLO per laboratorio)
-
-⚠️ **Questo progetto è SOLO per scopi didattici in ambiente locale.**
-
-- `DEBUG = True` (non usare in produzione!)
-- Password validator disabilitati (per permettere password semplici come `lab2024`)
-- Traffico HTTP **in chiaro** (no HTTPS)
-- Secret key hardcoded (non importa per localhost)
-- Database SQLite gitignored (ogni studente crea il proprio)
-
-**In produzione:** usare sempre HTTPS, password forti, DEBUG=False, secret key in variabili d'ambiente.
-
 ## Troubleshooting
 
 ### Il server non parte
-- Verifica che la porta 8000 non sia già occupata: `lsof -i :8000`
-- Verifica di aver attivato il virtual environment: `source venv/bin/activate`
+- Verifica di aver attivato il virtual environment 
 
 ### L'utente demo non esiste
 - Esegui: `python manage.py crea_utente_demo`
