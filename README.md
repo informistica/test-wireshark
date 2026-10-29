@@ -2,13 +2,22 @@
 
 Progetto didattico per scuole superiori e istituti tecnici: analisi del traffico HTTP di un'applicazione Django con Wireshark.
 
-## Obiettivo
+## Obiettivo :  analisi del login Django con Wireshark
 
-Questo progetto fornisce un'applicazione web Django minimale che permette agli studenti di:
-- Osservare il flusso HTTP di un login (GET form, POST credenziali, redirect con sessionid)
-- Distinguere un **login riuscito** (HTTP 302 + Set-Cookie sessionid) da un **login fallito** (HTTP 200 senza sessionid)
-- Analizzare i cookie CSRF e di sessione in Wireshark
-- Comprendere il protocollo HTTP su TCP in un contesto reale
+
+In questa esercitazione documenterai, con catture che hai generato tu e aperto in Wireshark, l'intero ciclo di un login Django su loopback (tipicamente `127.0.0.1:8000`), confrontandolo anche con un login fallito.
+
+Con gli screenshot e le risposte dovrai dimostrare, in ordine, queste fasi:
+
+1. Handshake TCP: apertura della connessione verso il server.
+2. Richiesta della home non autenticata.
+3. Richiesta della pagina o del form di login.
+4. Autenticazione: POST di login, risposta del server e consegna del cookie di sessione.
+5. Richiesta della home autenticata: stesso `sessionid` rimandato dal client.
+6. Chiusura della connessione: FIN e fine dello stream.
+7. Confronto obbligatorio con un login fallito: stesso tipo di POST, ma con esito diverso.
+
+Importante: le figure devono mostrare i pacchetti e gli header letti dal tuo file `.pcap`, non bastano le descrizioni a parole.
 
 ## Requisiti
 
